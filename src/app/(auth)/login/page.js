@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import Image from "next/image";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({ weight: ["400", "600"], subsets: ["latin"] });
 
 export default function LoginPage() {
+  const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,59 +43,82 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={`${poppins.className} min-h-screen flex items-center justify-center bg-slate-900 p-4`}>
-      <div className="w-full max-w-md bg-slate-800 rounded-3xl shadow-2xl p-8 border border-slate-700 animate-fadeIn">
-        <h2 className="text-3xl font-extrabold text-center text-slate-100 drop-shadow-lg mb-8 tracking-wide">
-          Welcome Back
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden font-sans">
+      
+      {/* Background blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-100 rounded-full blur-3xl opacity-30 translate-x-1/2 translate-y-1/2" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 w-full max-w-md p-10 bg-white rounded-3xl shadow-2xl"
+      >
+        {/* Logo/Image */}
+        <div className="flex justify-center mb-8">
+          <Image
+            src="/doctori.png"
+            alt="Healthcare Logo"
+            width={120}
+            height={120}
+            className="rounded-full drop-shadow-xl"
+          />
+        </div>
+
+        {/* Heading */}
+        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
+          <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+            Welcome Back
+          </span>
         </h2>
+        <p className="text-gray-600 text-center mb-8">
+          Log in to track your health, manage medicines, and consult with doctors.
+        </p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full p-3 rounded-xl bg-slate-700 border border-slate-600 placeholder-slate-400
-            focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all shadow-sm hover:shadow-md text-slate-100"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="w-full p-3 rounded-xl bg-slate-700 border border-slate-600 placeholder-slate-400
-            focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all shadow-sm hover:shadow-md text-slate-100"
-          />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+            <input
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="w-full px-5 py-3 rounded-xl border border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            />
+          </motion.div>
+          <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+            <input
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              className="w-full px-5 py-3 rounded-xl border border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            />
+          </motion.div>
 
-          <button
+          {/* Buttons */}
+          <motion.button
             type="submit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full py-3 rounded-xl text-white font-semibold bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg hover:shadow-xl transition disabled:opacity-60"
             disabled={loading}
-            className="w-full py-3 text-lg font-semibold rounded-xl bg-blue-500 text-slate-100
-            hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-60"
           >
             {loading ? "Logging in..." : "Log In"}
-          </button>
+          </motion.button>
+
+          <p className="text-center text-gray-500">
+            Don't have an account?{" "}
+            <a
+              href="/signup"
+              className="text-blue-500 font-semibold hover:underline"
+            >
+              Sign Up
+            </a>
+          </p>
         </form>
-
-        <p className="text-center text-slate-400 mt-6 text-sm">
-          Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-400 hover:text-blue-300 underline transition">
-            Sign Up
-          </a>
-        </p>
-      </div>
-
-      <style>
-        {`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-fadeIn {
-            animation: fadeIn 0.6s ease-out forwards;
-          }
-        `}
-      </style>
+      </motion.div>
     </div>
   );
 }
