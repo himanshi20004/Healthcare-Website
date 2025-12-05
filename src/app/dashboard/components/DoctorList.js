@@ -1,11 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DoctorList() {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
 
+  const router = useRouter();
+
+  // Load logged-in user
+  useEffect(() => {
+    async function getUser() {
+      const res = await fetch("/api/auth/me");
+      const data = await res.json();
+      setUserId(data.userId);
+    }
+    getUser();
+  }, []);
+
+  // Load doctors
   useEffect(() => {
     async function loadDoctors() {
       try {
@@ -20,6 +35,21 @@ export default function DoctorList() {
     }
     loadDoctors();
   }, []);
+
+  // Start chat
+  async function startChat(doctorId) {
+  const res = await fetch("/api/chat/create", {
+    method: "POST",
+    body: JSON.stringify({ receiverId: doctorId })
+  });
+  
+  const chat = await res.json();
+
+  // Redirect to chat UI page
+  window.location.href = `/chat/${doctorId}`;
+}
+
+
 
   if (loading) return <p className="text-gray-300">Loading doctors...</p>;
 
@@ -42,12 +72,19 @@ export default function DoctorList() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <button className="bg-blue-600 px-3 py-1 rounded">
+            <button
+              onClick={() => router.push(`/appointments/book/${doc._id}`)}
+              className="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 transition"
+            >
               Fix Appointment
             </button>
-            <button className="bg-green-600 px-3 py-1 rounded">
-              Start Chat
-            </button>
+
+            <button
+  onClick={() => startChat(doctors._id)}
+  className="bg-green-600 px-4 py-2 text-white rounded"
+>
+  Start Chat
+</button>
           </div>
         </div>
       ))}

@@ -7,6 +7,7 @@ const medicineSchema = new mongoose.Schema({
   todaysDoseComplete: { type: Boolean, default: false },
   doseCompletedAt: { type: Date }, // store when it was completed
   createdAt: { type: Date, default: Date.now },
+  dates: { type: [String], default: [] } // <-- store selected dates
 });
 
 const Medicine = mongoose.models.Medicine || mongoose.model("Medicine", medicineSchema);

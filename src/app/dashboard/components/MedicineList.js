@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 export default function MedicineList({ userId }) {
   const [medicines, setMedicines] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedMed, setSelectedMed] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   // -----------------------------
   // FETCH MEDICINES
@@ -16,20 +18,8 @@ export default function MedicineList({ userId }) {
       try {
         const res = await fetch(`/api/medicines?userId=${userId}`);
         const data = await res.json();
-        const now = new Date();
-        
-        const updatedData = data.map((med) => {
-          // Compute if the doseCompletedAt is older than 24h
-          if (med.doseCompletedAt) {
-            const hoursPassed = (now - new Date(med.doseCompletedAt)) / (1000 * 60 * 60);
-            if (hoursPassed >= 24) {
-              return { ...med, todaysDoseComplete: false, doseCompletedAt: null };
-            }
-          }
-          return med;
-        });
 
-        setMedicines(updatedData);
+        setMedicines(data);
       } catch (err) {
         console.error("Error fetching medicines:", err);
       } finally {
@@ -41,77 +31,93 @@ export default function MedicineList({ userId }) {
   }, [userId]);
 
   // -----------------------------
-  // TOGGLE DOSE
+  // OPEN CALENDAR POPUP
   // -----------------------------
-  const toggleDose = async (medId) => {
-    const now = new Date();
+  const openCalendar = (med) => {
+    setSelectedMed(med);
+    setSelectedDate(null);
+  };
 
-    setMedicines((prev) =>
-      prev.map((med) => {
-        if (med._id === medId) {
-          const newValue = !med.todaysDoseComplete;
-          return { ...med, todaysDoseComplete: newValue, doseCompletedAt: newValue ? now : null };
-        }
-        return med;
-      })
-    );
+  // -----------------------------
+  // SAVE DATE
+  // -----------------------------
+  const saveDate = async () => {
+    if (!selectedDate || !selectedMed) return;
 
-    // Update backend
     try {
-      const med = medicines.find((m) => m._id === medId);
-      const newValue = !med.todaysDoseComplete;
-      const doseCompletedAt = newValue ? new Date() : null;
-
-      const res = await fetch(`/api/medicines/${medId}`, {
-        method: "PATCH",
+      const res = await fetch(`/api/medicines/${selectedMed._id}/dates`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ todaysDoseComplete: newValue, doseCompletedAt }),
+        body: JSON.stringify({ date: selectedDate }),
       });
 
-      if (!res.ok) throw new Error("Failed to update");
+      if (!res.ok) throw new Error("Failed to save date");
 
       const updatedMed = await res.json();
 
-      // Sync frontend with backend
-      setMedicines((prev) =>
-        prev.map((m) => (m._id === medId ? updatedMed : m))
-      );
+      setMedicines((prev) => prev.map((m) => (m._id === updatedMed._id ? updatedMed : m)));
+      setSelectedMed(null);
     } catch (err) {
-      console.error("Toggle update error:", err);
+      console.error("Saving date error:", err);
     }
   };
 
-  if (loading) return <p>Loading medicines...</p>;
-  if (!medicines.length) return <p>No medicines added yet.</p>;
+  if (loading) return <p className="text-gray-500">Loading medicines...</p>;
+  if (!medicines.length) return <p className="text-gray-500">No medicines added yet.</p>;
 
-  // -----------------------------
-  // RENDER MEDICINE LIST
-  // -----------------------------
   return (
-    <ul className="flex flex-col gap-3">
-      {medicines.map((med) => (
-        <li
-          key={med._id}
-          className="p-4 bg-gray-800 rounded-2xl flex justify-between items-center shadow-md hover:shadow-lg transition"
-        >
-          <div>
-            <p className="text-white font-semibold">{med.name}</p>
-            <p className="text-sm text-gray-400">{med.dosage || ""}</p>
-          </div>
+    <>
+      <ul className="flex flex-col gap-4">
+        {medicines.map((med) => (
+          <li
+            key={med._id}
+            className="p-4 bg-white rounded-3xl flex justify-between items-center shadow-md hover:shadow-xl transition"
+          >
+            <div>
+              <p className="text-gray-900 font-semibold text-lg">{med.name}</p>
+              <p className="text-gray-500 text-sm">{med.dosage || ""}</p>
+              <p className="text-xs text-blue-600 mt-1">Saved Dates: {med?.dates?.join(", ") || "None"}</p>
+            </div>
 
-          {/* Toggle Switch */}
-          <label className="relative inline-flex items-center cursor-pointer">
+            <button
+              onClick={() => openCalendar(med)}
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow-md hover:scale-105 transition"
+            >
+              Mark Date
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {selectedMed && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-3xl w-full max-w-md shadow-xl">
+            <h2 className="text-xl font-semibold mb-4 text-black">Select Date for {selectedMed.name}</h2>
+
             <input
-              type="checkbox"
-              className="sr-only peer"
-              checked={med.todaysDoseComplete || false}
-              onChange={() => toggleDose(med._id)}
+              type="date"
+              className="w-full p-3 rounded-xl border text-black"
+              onChange={(e) => setSelectedDate(e.target.value)}
             />
-            <div className="w-12 h-6 bg-gray-600 rounded-full peer-focus:ring-2 peer-focus:ring-blue-500 peer-checked:bg-green-500 transition-all"></div>
-            <span className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-all peer-checked:translate-x-6"></span>
-          </label>
-        </li>
-      ))}
-    </ul>
+
+            <div className="flex justify-end mt-6 gap-3">
+              <button
+                onClick={() => setSelectedMed(null)}
+                className="px-4 py-2 rounded-xl text-black bg-gray-200"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={saveDate}
+                className="px-4 py-2 rounded-xl bg-green-500 text-white"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
