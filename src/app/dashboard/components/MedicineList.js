@@ -1,123 +1,150 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // To navigate to detail view
 
 export default function MedicineList({ userId }) {
   const [medicines, setMedicines] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedMed, setSelectedMed] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
 
-  // -----------------------------
-  // FETCH MEDICINES
-  // -----------------------------
+  // Local state to track checkbox changes before saving
+  const [markedIds, setMarkedIds] = useState(new Set());
+  const [saving, setSaving] = useState(false);
+
+  const router = useRouter();
+
+  // Get Today's Date in YYYY-MM-DD format (Local time)
+  const getTodayStr = () => {
+    const d = new Date();
+    // Adjust for timezone offset to get strictly local YYYY-MM-DD
+    const offset = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - offset).toISOString().split('T')[0];
+  };
+
+  const todayStr = getTodayStr();
+
   useEffect(() => {
     if (!userId) return;
-
-    const fetchMedicines = async () => {
-      try {
-        const res = await fetch(`/api/medicines?userId=${userId}`);
-        const data = await res.json();
-
-        setMedicines(data);
-      } catch (err) {
-        console.error("Error fetching medicines:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchMedicines();
   }, [userId]);
 
-  // -----------------------------
-  // OPEN CALENDAR POPUP
-  // -----------------------------
-  const openCalendar = (med) => {
-    setSelectedMed(med);
-    setSelectedDate(null);
-  };
-
-  // -----------------------------
-  // SAVE DATE
-  // -----------------------------
-  const saveDate = async () => {
-    if (!selectedDate || !selectedMed) return;
-
+  const fetchMedicines = async () => {
     try {
-      const res = await fetch(`/api/medicines/${selectedMed._id}/dates`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: selectedDate }),
+      const res = await fetch(`/api/medicines?userId=${userId}`);
+      const data = await res.json();
+      setMedicines(data);
+
+      // Initialize markedIds based on database data
+      const initialMarked = new Set();
+      data.forEach(med => {
+        if (med.dates && med.dates.includes(todayStr)) {
+          initialMarked.add(med._id);
+        }
       });
-
-      if (!res.ok) throw new Error("Failed to save date");
-
-      const updatedMed = await res.json();
-
-      setMedicines((prev) => prev.map((m) => (m._id === updatedMed._id ? updatedMed : m)));
-      setSelectedMed(null);
+      setMarkedIds(initialMarked);
     } catch (err) {
-      console.error("Saving date error:", err);
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <p className="text-gray-500">Loading medicines...</p>;
-  if (!medicines.length) return <p className="text-gray-500">No medicines added yet.</p>;
+  const toggleCheckbox = (id) => {
+    const newSet = new Set(markedIds);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setMarkedIds(newSet);
+  };
+
+  const handleSaveDay = async () => {
+    setSaving(true);
+    try {
+      // Process all medicines in parallel
+      const promises = medicines.map(med => {
+        const isTaken = markedIds.has(med._id);
+        return fetch("/api/medicines/toggle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: med._id,
+            date: todayStr,
+            status: isTaken
+          }),
+        });
+      });
+
+      await Promise.all(promises);
+      alert("Daily log saved!");
+      fetchMedicines(); // Refresh data
+    } catch (err) {
+      alert("Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <div className="animate-pulse h-20 bg-gray-200 rounded-xl"></div>;
 
   return (
-    <>
-      <ul className="flex flex-col gap-4">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center bg-blue-50 p-4 rounded-xl border border-blue-100">
+        <div>
+          <h3 className="font-bold text-blue-900">Today's Checklist</h3>
+          <p className="text-sm text-blue-600">{new Date().toDateString()}</p>
+        </div>
+        <button
+          onClick={handleSaveDay}
+          disabled={saving}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold shadow-md transition disabled:opacity-50"
+        >
+          {saving ? "Saving..." : "Save Log"}
+        </button>
+      </div>
+
+      <div className="grid gap-4">
         {medicines.map((med) => (
-          <li
+          <div
             key={med._id}
-            className="p-4 bg-white rounded-3xl flex justify-between items-center shadow-md hover:shadow-xl transition"
+            className="group bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between"
           >
-            <div>
-              <p className="text-gray-900 font-semibold text-lg">{med.name}</p>
-              <p className="text-gray-500 text-sm">{med.dosage || ""}</p>
-              <p className="text-xs text-blue-600 mt-1">Saved Dates: {med?.dates?.join(", ") || "None"}</p>
+            {/* Clickable Area to go to Details */}
+            <div
+              className="flex-1 cursor-pointer"
+              onClick={() => router.push(`/dashboard/medicine/${med._id}`)}
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold">
+                  Rx
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition">
+                    {med.name}
+                  </h4>
+                  <p className="text-sm text-gray-500">
+                    {med.dosage} • {med.time}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <button
-              onClick={() => openCalendar(med)}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow-md hover:scale-105 transition"
-            >
-              Mark Date
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      {selectedMed && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white p-6 rounded-3xl w-full max-w-md shadow-xl">
-            <h2 className="text-xl font-semibold mb-4 text-black">Select Date for {selectedMed.name}</h2>
-
-            <input
-              type="date"
-              className="w-full p-3 rounded-xl border text-black"
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
-
-            <div className="flex justify-end mt-6 gap-3">
-              <button
-                onClick={() => setSelectedMed(null)}
-                className="px-4 py-2 rounded-xl text-black bg-gray-200"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={saveDate}
-                className="px-4 py-2 rounded-xl bg-green-500 text-white"
-              >
-                Save
-              </button>
+            {/* Checkbox Area */}
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <span className="text-sm font-medium text-gray-600">Taken?</span>
+                <input
+                  type="checkbox"
+                  checked={markedIds.has(med._id)}
+                  onChange={() => toggleCheckbox(med._id)}
+                  className="w-6 h-6 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                />
+              </label>
             </div>
           </div>
-        </div>
-      )}
-    </>
+        ))}
+      </div>
+    </div>
   );
 }

@@ -21,61 +21,32 @@ export default function MedicalAssistant() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ doubt }),
       });
-<<<<<<< HEAD
       const data = await res.json();
       setAnswer(data.answer || "Error: Could not get response.");
     } catch (err) {
       setAnswer("Error: Something went wrong. Try again.");
-=======
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Something went wrong");
-      }
-
-      setAnswer(data.answer);
-    } catch (err) {
-      setError(err.message);
->>>>>>> c52c7f339706e0a4c02ce8612e503181aace0cb8
     } finally {
       setLoading(false);
     }
   };
 
   return (
-<<<<<<< HEAD
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black px-4 py-10 flex justify-center items-start">
       <div className="max-w-3xl w-full">
 
         {/* Header */}
         <h1 className="text-4xl font-bold text-center text-white mb-2 drop-shadow-xl">
-=======
-    <div className="min-h-screen bg-slate-900 text-white px-4 py-6 font-sans">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <h1 className="text-3xl font-bold text-center mb-2 drop-shadow-lg text-blue-400">
->>>>>>> c52c7f339706e0a4c02ce8612e503181aace0cb8
           AI Medical Assistant
         </h1>
         <p className="text-center text-slate-400 mb-10">
           Ask any medical question & get instant guidance
         </p>
 
-<<<<<<< HEAD
         {/* Input Card */}
         <div className="bg-slate-800/50 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-slate-700 transition-transform hover:scale-[1.02] hover:shadow-blue-700/40">
           <textarea
             className="w-full p-4 bg-slate-700/80 rounded-xl outline-none border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition placeholder-slate-400 text-white"
             rows="5"
-=======
-        {/* Card */}
-        <div className="bg-slate-800/60 backdrop-blur-lg p-6 rounded-3xl shadow-2xl border border-slate-700 transition hover:scale-[1.005] hover:shadow-blue-700/20">
-          {/* Textarea */}
-          <textarea
-            className="w-full p-4 bg-slate-700 rounded-xl outline-none border border-slate-600 focus:border-blue-500 transition placeholder-slate-400 text-slate-100 resize-none"
-            rows="4"
->>>>>>> c52c7f339706e0a4c02ce8612e503181aace0cb8
             placeholder="Describe your symptoms or ask any medical doubt..."
             value={doubt}
             onChange={(e) => setDoubt(e.target.value)}
@@ -83,16 +54,7 @@ export default function MedicalAssistant() {
 
           <button
             onClick={askAI}
-<<<<<<< HEAD
             className="w-full mt-5 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-lg font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] transition"
-=======
-            disabled={loading || !doubt.trim()}
-            className={`w-full mt-4 py-3 text-lg font-semibold rounded-xl transition shadow-md 
-              ${loading || !doubt.trim()
-                ? "bg-slate-600 text-slate-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-lg"
-              }`}
->>>>>>> c52c7f339706e0a4c02ce8612e503181aace0cb8
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -108,26 +70,11 @@ export default function MedicalAssistant() {
           </button>
         </div>
 
-<<<<<<< HEAD
         {/* Response Card */}
         {answer && (
           <div className="mt-8 bg-slate-800/40 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-slate-700 animate-fadeIn">
             <h2 className="text-xl font-semibold mb-3 text-blue-400">
               Assistant Response
-=======
-        {/* Error Message */}
-        {error && (
-          <div className="mt-6 bg-red-900/50 p-4 rounded-xl border border-red-700 text-red-200 text-center animate-fadeIn">
-            {error}
-          </div>
-        )}
-
-        {/* Response */}
-        {answer && (
-          <div className="mt-8 bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 animate-fadeIn">
-            <h2 className="text-xl font-semibold mb-3 text-emerald-400 flex items-center gap-2">
-              <span className="text-2xl">🩺</span> Assistant Response
->>>>>>> c52c7f339706e0a4c02ce8612e503181aace0cb8
             </h2>
             <div className="text-slate-200 leading-relaxed whitespace-pre-wrap">
               {answer}
@@ -139,7 +86,6 @@ export default function MedicalAssistant() {
         )}
       </div>
 
-<<<<<<< HEAD
       {/* Animation */}
       <style>
         {`
@@ -152,18 +98,6 @@ export default function MedicalAssistant() {
           }
         `}
       </style>
-=======
-      {/* Animation Styles */}
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.4s ease-out forwards;
-        }
-      `}</style>
->>>>>>> c52c7f339706e0a4c02ce8612e503181aace0cb8
     </div>
   );
 }
