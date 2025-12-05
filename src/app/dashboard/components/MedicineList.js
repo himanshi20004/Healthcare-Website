@@ -32,7 +32,15 @@ export default function MedicineList({ userId }) {
     try {
       const res = await fetch(`/api/medicines?userId=${userId}`);
       const data = await res.json();
-      setMedicines(data);
+
+      // FILTER: Only show medicines where taken days < total days
+      const activeMedicines = data.filter(med => {
+        const taken = med.dates ? med.dates.length : 0;
+        const total = med.totalDays || 1;
+        return taken < total;
+      });
+
+      setMedicines(activeMedicines);
 
       // Initialize markedIds based on database data
       const initialMarked = new Set();
