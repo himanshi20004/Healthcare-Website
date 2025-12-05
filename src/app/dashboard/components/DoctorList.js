@@ -6,21 +6,8 @@ import { useRouter } from "next/navigation";
 export default function DoctorList() {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(null);
-
   const router = useRouter();
 
-  // Load logged-in user
-  useEffect(() => {
-    async function getUser() {
-      const res = await fetch("/api/auth/me");
-      const data = await res.json();
-      setUserId(data.userId);
-    }
-    getUser();
-  }, []);
-
-  // Load doctors
   useEffect(() => {
     async function loadDoctors() {
       try {
@@ -36,56 +23,44 @@ export default function DoctorList() {
     loadDoctors();
   }, []);
 
-  // Start chat
   async function startChat(doctorId) {
-  const res = await fetch("/api/chat/create", {
-    method: "POST",
-    body: JSON.stringify({ receiverId: doctorId })
-  });
-  
-  const chat = await res.json();
+    // 1. Create/Find Chat logic
+    await fetch("/api/chat/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ receiverId: doctorId })
+    });
 
-  // Redirect to chat UI page
-  window.location.href = `/chat/${doctorId}`;
-}
+    // 2. Redirect to the DASHBOARD chat layout
+    router.push(`/dashboard/chat/${doctorId}`);
+  }
 
-
-
-  if (loading) return <p className="text-gray-300">Loading doctors...</p>;
-
-  if (doctors.length === 0)
-    return <p className="text-gray-400">No doctors registered yet.</p>;
+  if (loading) return <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 animate-pulse"><div className="h-32 bg-gray-800 rounded-xl"></div><div className="h-32 bg-gray-800 rounded-xl"></div></div>;
+  if (doctors.length === 0) return <p className="text-gray-400">No doctors available.</p>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
       {doctors.map((doc) => (
         <div
           key={doc._id}
-          className="bg-gray-900 p-4 rounded-lg shadow flex justify-between items-center text-white"
+          className="bg-gray-800 p-5 rounded-xl border border-gray-700 flex justify-between items-center text-white hover:border-blue-500 transition shadow-lg"
         >
-          <div>
-            <h2 className="text-xl font-bold">{doc.name}</h2>
-            <p className="text-gray-400">{doc.specialization || "No specialization"}</p>
-            <p className="text-gray-500 text-sm">
-              {doc.experience ? `${doc.experience} years` : ""}
-            </p>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-blue-900 flex items-center justify-center text-blue-200 font-bold text-lg">
+              {doc.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">{doc.name}</h2>
+              <p className="text-blue-300 text-sm font-medium">{doc.role ? doc.role.toUpperCase() : "DOCTOR"}</p>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => router.push(`/appointments/book/${doc._id}`)}
-              className="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 transition"
-            >
-              Fix Appointment
-            </button>
-
-            <button
-  onClick={() => startChat(doctors._id)}
-  className="bg-green-600 px-4 py-2 text-white rounded"
->
-  Start Chat
-</button>
-          </div>
+          <button
+            onClick={() => startChat(doc._id)}
+            className="bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-2 text-white rounded-lg hover:from-blue-500 hover:to-blue-400 transition shadow-md text-sm font-semibold"
+          >
+            Chat
+          </button>
         </div>
       ))}
     </div>
