@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
+import pickle
 
 # --- Configuration ---
 app = FastAPI(title="Medicine AI Predictor")
@@ -41,6 +42,12 @@ class PredictRequest(BaseModel):
 
 def get_model_path(user_id):
     return os.path.join(MODEL_DIR, f"model_{user_id}.pkl")
+
+def test_model_manual():
+    test_model_path = os.path.join(MODEL_DIR, "model_693553420783c27b4f42ad9d.pkl")
+    model = pickle.load(open(test_model_path, 'rb')) # Model successfully loaded
+    # perform test predictions here with simple test model, pass for now
+test_model_manual()
 
 def fetch_user_data(user_id):
     try:
