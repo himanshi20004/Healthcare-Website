@@ -8,20 +8,21 @@ import {
     UserRound,
     Stethoscope,
     History,
-    LogOut
+    LogOut,
+    TrendingUp // <--- Import this icon
 } from "lucide-react";
 
 export default function Sidebar({ userName }) {
     const pathname = usePathname();
 
     const isActive = (path) => {
-        // Exact match for dashboard, partial match for others (e.g. /dashboard/chat/123 should highlight chat)
         if (path === "/dashboard") return pathname === "/dashboard";
         return pathname.startsWith(path);
     };
 
     const navItems = [
         { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+        { name: "Performance", href: "/dashboard/performance", icon: TrendingUp }, // <--- Add this row
         { name: "Messages", href: "/dashboard/chat", icon: MessageSquare },
         { name: "Find Doctors", href: "/dashboard/doctors", icon: UserRound },
         { name: "AI Assistant", href: "/dashboard/ai-assistance", icon: Stethoscope },
@@ -45,8 +46,8 @@ export default function Sidebar({ userName }) {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 p-3 rounded-xl transition font-medium ${active
-                                    ? "bg-white/20 text-white shadow-sm"
-                                    : "text-blue-100 hover:bg-white/10 hover:text-white"
+                                ? "bg-white/20 text-white shadow-sm"
+                                : "text-blue-100 hover:bg-white/10 hover:text-white"
                                 }`}
                         >
                             <Icon className="w-5 h-5" />
