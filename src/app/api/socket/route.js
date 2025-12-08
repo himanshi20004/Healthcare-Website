@@ -1,8 +1,7 @@
 import { Server } from "socket.io";
 
-export const config = {
-  runtime: "nodejs",  
-};
+export const runtime = "nodejs"; // Correct App Router syntax
+
 
 let io;
 
