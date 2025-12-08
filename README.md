@@ -1,6 +1,5 @@
 # 💊 HealthVerse: AI-Powered Medication Management Platform
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tech Stack: Next.js & MongoDB](https://img.shields.io/badge/Tech%20Stack-Next.js%20%7C%20MongoDB-blue.svg)](https://nextjs.org/)
 [![AI Integration: Gemini](https://img.shields.io/badge/AI%20Chatbot-Gemini%20API-orange.svg)](https://ai.google.com/gemini/)
 
@@ -14,9 +13,7 @@ We are building a comprehensive health management platform that acts as a **digi
 
 ***
 
-## 2. Problem Statement (PS Number) ❓
-
-**PS: Not Applicable**
+## 2. Problem Statement (PS Number):11
 
 Patients frequently miss essential medication doses due to busy schedules, leading to reduced treatment effectiveness and potential health complications. There is currently no dedicated system for doctors and caregivers to monitor medication adherence, predict missed doses, or track symptoms in real-time, risking patient well-being and recovery.
 
@@ -29,10 +26,10 @@ Patients frequently miss essential medication doses due to busy schedules, leadi
 | **Medication Management** | **Ranger Power Capsule Management** | Complete logging system to schedule doses, mark taken/missed, and maintain a full history of adherence. |
 | **Notifications** | **Dose Reminder Engine** | Automated, timely alerts for upcoming and missed doses sent to users, including snooze functionality via `cron.js`. |
 | **Intelligence** | **Missed Dose Prediction Model (AI)** | Analyzes patient habits and adherence history to forecast skipped doses and issue proactive, early warnings. |
-| **Monitoring** | **Health Dashboard (Morpher Panel)** | Visual display of adherence scores, missed streaks, symptom trends, and overall wellness for patients and caregivers. |
-| **Access Control** | **Multi-Role Access** | Distinct, secure interfaces tailored for Rangers (Patients), Doctors, and Health Admins (Zordon/Alpha-5). |
+| **Monitoring** | **Health Dashboard (Morpher Panel)** | Visual display of adherence scores, missed streaks, and overall wellness for patients and caregivers. |
+| **Access Control** | **Multi-Role Access** | Distinct, secure interfaces tailored for Rangers (Patients)and Doctors|
 | **Support** | **AI Chatbot Health Assistant** | Intelligent assistant powered by the **GEMINI API** to answer general health queries and provide specific capsule (medication) explanations. |
-| **Utility** | **Search Bar & Chat Integration** | Robust search functionality for doctors to filter patient data and real-time chat for communication. |
+| **Utility** | **Search Bar & Chat Integration** | Robust search functionality for users to filter doctor data and real-time chat for communication. |
 
 ***
 
@@ -69,11 +66,10 @@ The core functionality is exposed via internal Next.js API Routes, secured using
 | Endpoint | Method | Description | Roles |
 | :--- | :--- | :--- | :--- |
 | `/api/auth/login`, `/api/auth/signup` | `POST` | User authentication and token issuance (includes Google Auth flow). | All |
-| `/api/medicine/schedule` | `POST`/`GET` | Add a new medication schedule or fetch the current schedule/history. | Ranger |
-| `/api/medicine/dose/[id]` | `PUT` | Mark a specific dose as 'taken' or 'missed'. | Ranger |
-| `/api/doctor/patients` | `GET` | Fetch monitored patient data with search/filter options. | Doctor |
+| `/api/dashboard` | `POST`/`GET` | Add a new medication schedule or fetch the current schedule/history. | Ranger |
+| `/api/dashboard/medicine/[id]` | `PUT` | Mark a specific dose as 'taken' or 'missed'. | Ranger |
 | `/api/predict/missed` | `POST` | Endpoint to trigger or fetch results from the ML prediction model. | Ranger/Doctor |
-| `/api/chat/health` | `POST` | Send queries to the GEMINI-powered health assistant. | All |
+| `/api/chat` | `POST` | Send queries to the GEMINI-powered health assistant. | All |
 
 ***
 
