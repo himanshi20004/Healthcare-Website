@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Poppins } from "next/font/google";
+import { signIn } from "next-auth/react"; // 👈 New Import
 
 const poppins = Poppins({ weight: ["400", "600"], subsets: ["latin"] });
 
@@ -97,7 +98,7 @@ export default function LoginPage() {
             />
           </motion.div>
 
-          {/* Buttons */}
+          {/* Traditional Login Button */}
           <motion.button
             type="submit"
             whileHover={{ scale: 1.05 }}
@@ -108,6 +109,31 @@ export default function LoginPage() {
             {loading ? "Logging in..." : "Log In"}
           </motion.button>
 
+          {/* Divider */}
+          <div className="flex items-center my-6">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="px-3 text-gray-500 text-sm">OR</span>
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
+
+          {/* Google Login Button */}
+          <motion.button
+            type="button" // Use type="button" to prevent it from submitting the form
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full py-3 bg-white border border-gray-300 rounded-xl shadow-sm 
+            hover:shadow-md flex items-center justify-center gap-3"
+          >
+            <Image
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              width={22}
+              height={22}
+              alt="Google Logo"
+            />
+            <span className="text-gray-700 font-medium">Continue with Google</span>
+          </motion.button>
+          
           <p className="text-center text-gray-500">
             Don't have an account?{" "}
             <a

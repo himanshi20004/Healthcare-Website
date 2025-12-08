@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-import  connectDB  from "./mongodb.js";
-import User from "@/models/User.js";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import connectDB from "./mongodb";
+import User from "@/models/User";
 
 const JWT_SECRET = process.env.JWT_SECRET || "please_set_a_secret";
 
@@ -14,10 +16,27 @@ export function verifyToken(token) {
   catch { return null; }
 }
 
-// Server-side function
 export async function getCurrentUser() {
   try {
-    // Await cookies()
+    // 1️⃣ FIRST: Try NextAuth session (Google Auth)
+    const session = await getServerSession(authOptions);
+
+    if (session?.user?.email) {
+      await connectDB();
+      let user = await User.findOne({ email: session.user.email }).lean();
+
+      if (!user) {
+        user = await User.create({
+          name: session.user.name,
+          email: session.user.email,
+          avatar: session.user.image,
+          authProvider: "google"
+        });
+      }
+      return user;
+    }
+
+    // 2️⃣ SECOND: Your existing JWT logic (unchanged)
     const cookieStore = await cookies();
     const allCookies = cookieStore.getAll ? cookieStore.getAll() : [];
     const token = allCookies.find(c => c.name === "token")?.value;
@@ -28,8 +47,9 @@ export async function getCurrentUser() {
     if (!decoded) return null;
 
     await connectDB();
-    const user = await User.findById(decoded.id).lean();
-    return user;
+    const manualUser = await User.findById(decoded.id).lean();
+    return manualUser || null;
+
   } catch (err) {
     console.error("getCurrentUser error:", err);
     return null;
