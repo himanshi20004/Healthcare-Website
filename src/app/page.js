@@ -60,7 +60,7 @@ export default function Home() {
 
       {/* HERO SECTION */}
       <main className="min-h-screen bg-gray-50 flex flex-col">
-        <section className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center py-20 px-6 mx-auto">
+        <section className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center py-4 px-6 mx-auto">
           
           {/* Left Content */}
           <motion.div

@@ -16,7 +16,7 @@ export default async function DashboardPage() {
     const userId = user._id;
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen ">
             {/* Sidebar */}
             <aside className="w-64 bg-gradient-to-b from-blue-600 to-purple-600 text-white p-6 flex flex-col gap-4 min-h-screen shadow-xl fixed h-full">
                 <h2 className="text-2xl font-bold mb-6">Hello, {user.name}</h2>
@@ -36,7 +36,7 @@ export default async function DashboardPage() {
             </aside>
 
             {/* Main Dashboard - Added ml-64 to offset fixed sidebar */}
-            <main className="flex-1 p-8 ml-64">
+            <main className="flex-1 p-8 ml-64 ">
                 <h1 className="text-4xl font-extrabold mb-10 text-gray-900">Your Health Overview</h1>
 
                 {/* Stats Cards */}
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
 
                 {/* Add Medicine Form */}
                 <div className="bg-white p-8 rounded-3xl shadow-xl mb-20 border border-gray-100">
-                    <h2 className="text-xl font-bold mb-6 text-gray-900">Add Medicine</h2>
+                    <h2 className="text-xl font-bold mb-6 text-black-900">Add Medicine</h2>
                     <AddMedicineForm userId={userId} />
                 </div>
             </main>

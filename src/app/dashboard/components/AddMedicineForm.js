@@ -65,7 +65,7 @@ export default function AddMedicineForm({ userId }) {
           placeholder="e.g. Paracetamol"
           value={form.name}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 text-black focus:ring-blue-500 outline-none"
           required
         />
       </div>
@@ -79,7 +79,7 @@ export default function AddMedicineForm({ userId }) {
           placeholder="e.g. 500mg"
           value={form.dosage}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full px-4 py-3 rounded-xl border border-gray-300 text-black focus:ring-2 focus:ring-blue-500 outline-none"
         />
       </div>
 
@@ -91,7 +91,7 @@ export default function AddMedicineForm({ userId }) {
           type="time"
           value={form.time}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full px-4 py-3 rounded-xl border text-black border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
           required
         />
       </div>
@@ -106,7 +106,7 @@ export default function AddMedicineForm({ userId }) {
           placeholder="e.g. 7"
           value={form.totalDays}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full px-4 py-3 rounded-xl border text-black border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
           required
         />
       </div>
@@ -119,7 +119,7 @@ export default function AddMedicineForm({ userId }) {
           type="date"
           value={form.startDate}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full px-4 py-3 rounded-xl border text-black border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
           required
         />
       </div>
@@ -133,7 +133,7 @@ export default function AddMedicineForm({ userId }) {
           placeholder="e.g. Take after food"
           value={form.notes}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full px-4 py-3 rounded-xl border text-black border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
         />
       </div>
 

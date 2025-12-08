@@ -1,16 +1,38 @@
 import mongoose from "mongoose";
 
-
 const userSchema = new mongoose.Schema(
-{
-name: { type: String, required: true, trim: true },
-email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-password: { type: String, required: true },
-role: { type: String, enum: ["patient", "doctor"], default: "patient" },
-createdAt: { type: Date, default: Date.now },
-},
-{ timestamps: true }
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    password: {
+      type: String,
+      // Password required ONLY for manual users
+      required: function () {
+        return this.authProvider === "manual";
+      },
+    },
+
+    avatar: {
+      type: String,
+    },
+
+    authProvider: {
+      type: String,
+      enum: ["manual", "google"],
+      default: "manual",
+    },
+  },
+  { timestamps: true }
 );
 
-
+// Prevent model overwrite error
 export default mongoose.models.User || mongoose.model("User", userSchema);

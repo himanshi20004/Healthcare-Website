@@ -12,6 +12,28 @@ export default async function DashboardPage() {
 
   const userId = user._id.toString();
 
+  // -------------------- DOCTOR VIEW --------------------
+  if (user.role === "doctor") {
+    return (
+      <div className="p-8">
+        <h1 className="text-4xl font-extrabold mb-10 text-gray-900">
+          Doctor Dashboard
+        </h1>
+
+        
+
+        {/* Appointments */}
+        <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 mb-10">
+          <h2 className="text-xl font-bold mb-4 text-gray-900">Appointments</h2>
+          <p className="text-gray-600">Appointments feature coming soon...</p>
+        </div>
+
+        
+      </div>
+    );
+  }
+
+  // -------------------- USER VIEW  --------------------
   return (
     <div className="p-8">
       <h1 className="text-4xl font-extrabold mb-10 text-gray-900">Your Health Overview</h1>
