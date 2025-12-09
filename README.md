@@ -1,4 +1,4 @@
-# 💊 HealthVerse: AI-Powered Medication Management Platform
+# 💊 HealthPlus: AI-Powered Medication Management Platform
 
 [![Tech Stack: Next.js & MongoDB](https://img.shields.io/badge/Tech%20Stack-Next.js%20%7C%20MongoDB-blue.svg)](https://nextjs.org/)
 [![AI Integration: Gemini](https://img.shields.io/badge/AI%20Chatbot-Gemini%20API-orange.svg)](https://ai.google.com/gemini/)
@@ -137,7 +137,7 @@ Follow these steps to set up and run the HealthVerse project on your local machi
 
 The project is currently deployed and accessible at:
 
-[HealthVerse Live Demo](https://healthverse-prod-deploy.vercel.app) (***Please update this link after deployment***)
+[HealthVerse Live Demo](https://helix-healthplus.vercel.app) 
 
 ***
 
