@@ -5,6 +5,8 @@
 ![Homepage](/assests/homepage.png)
 ![dashboard](/assests/dashboard.png)
 ![prediction](/assests/prediction.png)
+![chat](/assests/chat.png)
+![AI](/assests/AI-chat.png)
 A comprehensive health management platform designed to improve patient adherence to medication schedules using smart notifications, predictive AI, and centralized caregiver monitoring.
 
 ***
