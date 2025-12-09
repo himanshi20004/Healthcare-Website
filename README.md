@@ -2,7 +2,7 @@
 
 [![Tech Stack: Next.js & MongoDB](https://img.shields.io/badge/Tech%20Stack-Next.js%20%7C%20MongoDB-blue.svg)](https://nextjs.org/)
 [![AI Integration: Gemini](https://img.shields.io/badge/AI%20Chatbot-Gemini%20API-orange.svg)](https://ai.google.com/gemini/)
-![Homepage](./assets/homepage.png)
+![Homepage](/assets/homepage.png)
 A comprehensive health management platform designed to improve patient adherence to medication schedules using smart notifications, predictive AI, and centralized caregiver monitoring.
 
 ***
